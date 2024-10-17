@@ -21,6 +21,8 @@
 - `Visual Studio`
 - `Python`
 
+<br>
+
 ## 🧑‍🤝‍🧑 Member
 - <a href = "https://github.com/juyeon-Bae">`배주연`</a>
 - <a href = "https://github.com/leesori1410">`이소리`</a>
