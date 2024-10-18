@@ -4,7 +4,7 @@ pygame.init()                  # pygame 모듈 초기화
 
 #### 2. pygame에 사용되는 전역변수 선언
 Color = (255, 255, 255)        # 하얀색 (RGB 값)으로 배경색 설정
-size = [400, 300]              # 게임 창의 크기를 [400, 300]으로 설정 (너비, 높이)
+size = [1280, 832]              # 게임 창의 크기를 [400, 300]으로 설정 (너비, 높이)
 screen = pygame.display.set_mode(size)  # 설정된 크기의 게임 화면 생성
 done = False                   # 게임 루프의 종료 조건 (False일 동안 게임이 계속 실행됨)
 clock = pygame.time.Clock()    # 게임의 프레임 속도를 조절할 수 있는 시계 객체 생성
