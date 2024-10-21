@@ -31,15 +31,39 @@ play_rect.center = (size[0]//2, size[1]//2+50)
 
 # 펫 선택 화면 함수 (choosePet.py의 내용을 이곳에 추가)
 def choose_pet_screen():
+    
+    pet1Text = pygame.image.load('image/초등.png')
+    pet1Text = pygame.transform.scale(pet1Text, (73, 38))
+    
+    pet2Text = pygame.image.load('image/중등.png')
+    pet2Text = pygame.transform.scale(pet2Text, (73, 38))
+    
+    pet3Text = pygame.image.load('image/고등.png')
+    pet3Text = pygame.transform.scale(pet3Text, (73, 38))
+    
     elementPet = pygame.image.load('image/pet1.png')
     elementPet = pygame.transform.scale(elementPet, (100, 100))
+    
+    middlePet = pygame.image.load('image/pet2.png')
+    middlePet = pygame.transform.scale(middlePet, (100, 100))
+    
+    highPet = pygame.image.load('image/pet3.png')
+    highPet = pygame.transform.scale(highPet, (100, 100))
+    
     background = pygame.image.load('image/choose.png')  
     background = pygame.transform.scale(background, (1280, 832))
     screen.blit(background, (0, 0))
-    screen.blit(elementPet, ((1280 - 100)//2, (832 - 100)//2))   #나중에 간격 수정 예정..
+    screen.blit(pet1Text, (315,100))
+    screen.blit(pet2Text, (585,182))
+    screen.blit(pet3Text, (858,85))
+    screen.blit(elementPet, (300, 151))    
+    screen.blit(middlePet, (568, 260))   
+    screen.blit(highPet, (860, 140))   
+    
     pygame.display.update()
     
 # 게임 루프
+#choo = 1
 running = True
 while running:
     for event in pygame.event.get():

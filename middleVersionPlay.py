@@ -19,6 +19,13 @@ try:
     pet1 = pygame.image.load('image/pet1.png')
     pet1 = pygame.transform.scale(pet1, (90, 92))
     
+    pet1 = pygame.image.load('image/pet1.png')
+    pet1 = pygame.transform.scale(pet1, (90, 92))
+    
+    pet1 = pygame.image.load('image/pet1.png')
+    pet1 = pygame.transform.scale(pet1, (90, 92))
+    
+    
     character = pygame.image.load('image/character.gif')
     character = pygame.transform.scale(character, (350, 352))
    
