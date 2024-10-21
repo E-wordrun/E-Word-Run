@@ -1,5 +1,6 @@
 import pygame
 import sys
+import math
 
 pygame.init()
 
@@ -32,7 +33,10 @@ play_rect = play.get_rect()
 play_rect.center = (size[0] // 2, size[1] // 2 + 50)
 
 # 펫 선택 화면 함수
+pet = 0
 def choose_pet_screen():
+    global pet
+    
     pet1Text = pygame.image.load('image/초등.png')
     pet1Text = pygame.transform.scale(pet1Text, (73, 38))
     
@@ -77,6 +81,15 @@ def play_pet():
         pygame.image.load('image/character6.gif'),
         pygame.image.load('image/character7.gif')
     ]
+    
+    if pet == 1:
+        withPet = pygame.image.load('image/pet1.png')
+    elif pet == 2:
+        withPet = pygame.image.load('image/pet2.png')
+    elif pet == 3:
+        withPet = pygame.image.load('image/pet3.png')
+    withPet = pygame.transform.flip(withPet, True, False)
+    withPet = pygame.transform.scale(withPet, (100, 100))
 
     character_frame_index = 0
     character_frame_rate = 2  # 초당 10 프레임
@@ -98,6 +111,14 @@ def play_pet():
     
     # 캐릭터 초기 위치 저장
     character_start_y = character_rect.y
+    
+    # 펫의 초기 위치 및 위아래로 움직이는 애니메이션 설정
+    pet_base_y = screen_height - 380  # 펫의 기본 y 위치
+    pet_amplitude = 15  # 위아래로 움직이는 범위 (10픽셀)
+    pet_frequency = 0.2  # 움직이는 속도 (값이 작을수록 느려짐)
+
+    # 게임 루프
+    frame_count = 0  # 프레임 카운트 추가
 
     # 게임 루프
     while True:  # True로 변경하여 무한 루프를 유지
@@ -132,8 +153,18 @@ def play_pet():
                 is_jumping = False
                 velocity_y = 0
 
-        # 캐릭터 그리기
+        # 펫의 위아래 움직임 계산 (사인파 사용)
+        pet_y_offset = pet_amplitude * math.sin(pet_frequency * frame_count)
+        pet_y_position = pet_base_y + pet_y_offset
+        
+        # 캐릭터의 점프에 맞춰 펫도 점프
+        # if is_jumping:
+            # pet_y_position = pet_base_y + (character_rect.y - character_start_y)  
+
+        # 캐릭터 및 펫 그리기
         screen.blit(current_character_frame, character_rect)
+        screen.blit(withPet, (100, pet_y_position))  # 펫을 위아래로 움직임
+        frame_count += 1  # 프레임 카운트 증가  
         
         pygame.display.update()  # 화면 업데이트
         clock.tick(60)
@@ -141,6 +172,7 @@ def play_pet():
 # 게임 루프
 running = True
 clock = pygame.time.Clock()  # 시계 초기화
+
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -163,11 +195,37 @@ while running:
 
         # play 버튼 클릭 시 화면 전환
         if play_rect.collidepoint(mouse_pos) and mouse_click[0]:
-            current_screen = 'play_pet'  # 'choose_pet'으로 변경
+            current_screen = 'choose_pet'  # 'choose_pet'으로 변경
 
     elif current_screen == 'choose_pet':
         # 펫 선택 화면 출력
         choose_pet_screen()
+        
+        # 클릭 이벤트 처리
+        # 클릭 이벤트 처리
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if event.button == 1:  # 왼쪽 마우스 버튼 클릭
+                mouse_pos = pygame.mouse.get_pos()  # 마우스 위치 가져오기
+
+                # 각 펫의 이미지 좌표와 크기를 사용하여 Rect 객체 생성
+                element_pet_rect = pygame.Rect(300, 151, 100, 100)  # elementPet의 위치와 크기
+                middle_pet_rect = pygame.Rect(568, 260, 100, 100)  # middlePet의 위치와 크기
+                high_pet_rect = pygame.Rect(860, 140, 100, 100)    # highPet의 위치와 크기
+
+                # 각 Rect 객체와 마우스 위치의 충돌 여부 확인
+                if element_pet_rect.collidepoint(mouse_pos):
+                    pet = 1  # elementPet 클릭 시 pet 변수에 1을 할당
+                    print(f"Selected pet: {pet}")
+
+                if middle_pet_rect.collidepoint(mouse_pos):
+                    pet = 2  # middlePet 클릭 시 pet 변수에 2를 할당
+                    print(f"Selected pet: {pet}")
+
+                if high_pet_rect.collidepoint(mouse_pos):
+                    pet = 3  # highPet 클릭 시 pet 변수에 3을 할당
+                    print(f"Selected pet: {pet}")
+        if pet > 0:
+            current_screen = 'play_pet' 
 
     elif current_screen == 'play_pet':
         play_pet()  # play_pet 함수 호출
