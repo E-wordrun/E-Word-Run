@@ -32,6 +32,8 @@ background, play = load_images()
 play_rect = play.get_rect()
 play_rect.center = (size[0] // 2, size[1] // 2 + 50)
 
+
+
 # 펫 선택 화면 함수
 pet = 0
 def choose_pet_screen():
@@ -70,14 +72,20 @@ def choose_pet_screen():
     
     pygame.display.update()
 
+
+
 # 달리기 화면 with pet
 def play_pet():
     global is_jumping, velocity_y  # 전역 변수 사용
    
     scoreBox = pygame.image.load('image/scorebox.png')
     scoreBox = pygame.transform.scale(scoreBox, (291, 119))
+    
     coin = pygame.image.load('image/coin.png')
     coin = pygame.transform.scale(coin, (50, 57))
+    
+    roadCoin = pygame.image.load('image/coin.png');
+    roadCoin = pygame.transform.scale(coin, (50, 57))
    
     # 캐릭터 애니메이션 프레임 로드
     character_frames = [
@@ -149,6 +157,8 @@ def play_pet():
         screen.blit(background, (background_x_pos + background_width, 0))
         screen.blit(scoreBox, (910, 20))
         screen.blit(coin, (970, 40))
+        screen.blit(roadCoin,(303, 580))
+        screen.blit(roadCoin,(403, 450))
         
         # 캐릭터 애니메이션 프레임 업데이트
         character_frame_index = (character_frame_index + 1) % (character_frame_rate * len(character_frames))
