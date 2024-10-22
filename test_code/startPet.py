@@ -57,6 +57,9 @@ def choose_pet_screen():
     
     background = pygame.image.load('image/choose.png')  
     background = pygame.transform.scale(background, (1280, 832))
+    
+     
+    
     screen.blit(background, (0, 0))
     screen.blit(pet1Text, (315, 100))
     screen.blit(pet2Text, (585, 182))
@@ -70,7 +73,12 @@ def choose_pet_screen():
 # 달리기 화면 with pet
 def play_pet():
     global is_jumping, velocity_y  # 전역 변수 사용
-
+   
+    scoreBox = pygame.image.load('image/scorebox.png')
+    scoreBox = pygame.transform.scale(scoreBox, (291, 119))
+    coin = pygame.image.load('image/coin.png')
+    coin = pygame.transform.scale(coin, (50, 57))
+   
     # 캐릭터 애니메이션 프레임 로드
     character_frames = [
         pygame.image.load('image/character1.gif'),
@@ -98,7 +106,7 @@ def play_pet():
 
     # 점프 관련 변수 설정
     is_jumping = False
-    jump_speed = 40  # 점프 속도
+    jump_speed = 30  # 점프 속도
     gravity = 5      # 중력
     velocity_y = 5   # y축 속도
 
@@ -139,7 +147,9 @@ def play_pet():
         # 배경 그리기
         screen.blit(background, (background_x_pos, 0))
         screen.blit(background, (background_x_pos + background_width, 0))
-
+        screen.blit(scoreBox, (910, 20))
+        screen.blit(coin, (970, 40))
+        
         # 캐릭터 애니메이션 프레임 업데이트
         character_frame_index = (character_frame_index + 1) % (character_frame_rate * len(character_frames))
         current_character_frame = character_frames[character_frame_index // character_frame_rate]
