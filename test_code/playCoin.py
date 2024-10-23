@@ -76,13 +76,13 @@ def play_pet():
     scoreBox = pygame.transform.scale(scoreBox, (291, 103))
     
     coin = pygame.image.load('image/coin.png')
-    coin = pygame.transform.scale(coin, (50, 57))
+    coin = pygame.transform.scale(coin, (40, 40))
     
     roadCoins = {}
     try:
-        coin = pygame.image.load('image/coin.png')
-        coin = pygame.transform.scale(coin, (50, 57))
-        roadCoins = {f'roadCoin{i}': coin for i in range(1, 28)}
+        coins = pygame.image.load('image/coin.png')
+        coins = pygame.transform.scale(coins, (35, 35))
+        roadCoins = {f'roadCoin{i}': coins for i in range(1, 28)}
         print("Coin image loaded successfully!")  # 성공적으로 로드되었는지 확인
     except pygame.error as e:
         print(f"Failed to load coin image: {e}")
@@ -110,11 +110,11 @@ def play_pet():
     character_frame_index = 0
     character_frame_rate = 2  # 초당 10 프레임
     character_rect = character_frames[0].get_rect()
-    character_rect.center = (250, screen_height - 250)
+    character_rect.center = (200, screen_height - 250)
 
     # 점프 관련 변수 설정
     is_jumping = False
-    jump_speed = 30  # 점프 속도
+    jump_speed = 40  # 점프 속도
     gravity = 5      # 중력
     velocity_y = 5   # y축 속도
 
@@ -137,10 +137,10 @@ def play_pet():
     frame_count = 0  # 프레임 카운트 추가
 
     # roadCoins의 x 좌표를 모두 저장할 리스트
-    # road_coin_positions = [-84 + 102 * i for i in range(1, 28)]
+    # road_coins_positions = [-84 + 102 * i for i in range(1, 28)]
 
     # 코인 위치를 저장하는 리스트 초기화
-    road_coin_positions = [16 + i * 102 for i in range(28)]  # 초기 x 위치 설정
+    road_coins_positions = [16 + i * 102 for i in range(28)]  # 초기 x 위치 설정
     positions = [16 + i * 102 for i in range(28)]  # 초기 x 위치 설정
     
     # 게임 루프
@@ -160,17 +160,17 @@ def play_pet():
             background_x_pos = 0
     
         # 코인 위치 업데이트
-        for i in range(len(road_coin_positions)):
-            road_coin_positions[i] -= background_speed
+        for i in range(len(road_coins_positions)):
+            road_coins_positions[i] -= background_speed
             # 코인이 화면 왼쪽으로 사라지면 마지막 코인 뒤로 이동
-            if road_coin_positions[i] <= -50:  # 화면 밖으로 나가면
-                road_coin_positions[i] = road_coin_positions[-1] + positions[i] + 50 + 16 # 마지막 코인의 뒤에서 재배치
-    
+            if road_coins_positions[i] <= -50:  # 화면 밖으로 나가면
+                road_coins_positions[i] = road_coins_positions[-1] + positions[i] + 50 + 35 # 마지막 코인의 뒤에서 재배치
+        
         # 배경 그리기
         screen.blit(background, (background_x_pos, 0))
         screen.blit(background, (background_x_pos + background_width, 0))
         screen.blit(scoreBox, (910, 20))
-        screen.blit(coin, (963, 40))  # 이동한 coin 위치로 그리기
+        screen.blit(coin, (967, 50))  # 이동한 coin 위치로 그리기 15
     
         # 캐릭터 애니메이션 프레임 업데이트
         character_frame_index = (character_frame_index + 1) % (character_frame_rate * len(character_frames))
@@ -195,9 +195,19 @@ def play_pet():
         frame_count += 1  # 프레임 카운트 증가  
         
         # 코인 그리기
-        for position in road_coin_positions:
-            screen.blit(coin, (position, 573))  # 코인 위치에 그리기
-    
+        for position in road_coins_positions:
+            screen.blit(coins, (position, 577))  # 코인 위치에 그리기
+            
+        # 코인 위치 업데이트 및 충돌 감지
+        for i in range(len(road_coins_positions)):
+            coins_rect = coins.get_rect(topleft=(road_coins_positions[i], 577))
+            if character_rect.colliderect(coins_rect):  # 캐릭터와 코인 충돌 감지
+                # 코인이 충돌되면 새로운 위치에 다시 나타나도록 설정
+                # new_coins_x = random.randint(800, 1200)  # 새로운 x 좌표를 랜덤으로 설정
+                road_coins_positions[i] = road_coins_positions[-1] + positions[i] + 50 + 16
+            else:
+                screen.blit(coins, (road_coins_positions[i], 577))  # 코인 그리기
+
         pygame.display.update()  # 화면 업데이트
         clock.tick(60)
     
