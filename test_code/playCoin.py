@@ -86,7 +86,11 @@ def play_pet():
         print("Coin image loaded successfully!")  # 성공적으로 로드되었는지 확인
     except pygame.error as e:
         print(f"Failed to load coin image: {e}")
-
+        
+    # 폭탄 이미지
+    boom = pygame.image.load('image/장애물1.png')
+    boom = pygame.transform.scale(boom, (35, 35))
+    
     # 캐릭터 애니메이션 프레임 로드
     character_frames = [
         pygame.image.load('image/character1.gif'),
@@ -115,8 +119,8 @@ def play_pet():
     # 점프 관련 변수 설정
     is_jumping = False
     jump_speed = 40  # 점프 속도
-    gravity = 5      # 중력
-    velocity_y = 5   # y축 속도
+    gravity = 4      # 중력
+    velocity_y = 4   # y축 속도
 
     # 배경 설정
     background = pygame.image.load('image/background.png')
@@ -136,12 +140,10 @@ def play_pet():
     # 게임 루프
     frame_count = 0  # 프레임 카운트 추가
 
-    # roadCoins의 x 좌표를 모두 저장할 리스트
-    # road_coins_positions = [-84 + 102 * i for i in range(1, 28)]
-
     # 코인 위치를 저장하는 리스트 초기화
-    road_coins_positions = [16 + i * 102 for i in range(28)]  # 초기 x 위치 설정
-    positions = [16 + i * 102 for i in range(28)]  # 초기 x 위치 설정
+    road_coins_positions = [i * 130 for i in range(28)]  # 초기 x 위치 설정
+    positions = [i * 130 for i in range(28)]  # 초기 x 위치 설정
+    boom_positions = [i * 130 for i in range(28)]
     
     # 게임 루프
     while True:  # True로 변경하여 무한 루프를 유지
@@ -164,7 +166,12 @@ def play_pet():
             road_coins_positions[i] -= background_speed
             # 코인이 화면 왼쪽으로 사라지면 마지막 코인 뒤로 이동
             if road_coins_positions[i] <= -50:  # 화면 밖으로 나가면
-                road_coins_positions[i] = road_coins_positions[-1] + positions[i] + 50 + 35 # 마지막 코인의 뒤에서 재배치
+                road_coins_positions[i] = road_coins_positions[-1] + positions[i] + 130 # 마지막 코인의 뒤에서 재배치
+        for i in range(len(boom_positions)):
+            boom_positions[i] -= background_speed
+            # 폭탄이 화면 왼쪽으로 사라지면 마지막 코인 뒤로 이동
+            if boom_positions[i] <= -50:  # 화면 밖으로 나가면
+                boom_positions[i] = boom_positions[-1] + positions[i] + 130 
         
         # 배경 그리기
         screen.blit(background, (background_x_pos, 0))
@@ -194,19 +201,22 @@ def play_pet():
         screen.blit(withPet, (100, pet_y_position))  # 펫을 위아래로 움직임
         frame_count += 1  # 프레임 카운트 증가  
         
-        # 코인 그리기
-        for position in road_coins_positions:
-            screen.blit(coins, (position, 577))  # 코인 위치에 그리기
-            
         # 코인 위치 업데이트 및 충돌 감지
         for i in range(len(road_coins_positions)):
-            coins_rect = coins.get_rect(topleft=(road_coins_positions[i], 577))
-            if character_rect.colliderect(coins_rect):  # 캐릭터와 코인 충돌 감지
-                # 코인이 충돌되면 새로운 위치에 다시 나타나도록 설정
-                # new_coins_x = random.randint(800, 1200)  # 새로운 x 좌표를 랜덤으로 설정
-                road_coins_positions[i] = road_coins_positions[-1] + positions[i] + 50 + 16
+            if i==7 or i==9 or i==13 or i==16 or i==21 or i==23 or i==27:
+                coins_rect = coins.get_rect(topleft=(road_coins_positions[i], 447))
             else:
-                screen.blit(coins, (road_coins_positions[i], 577))  # 코인 그리기
+                coins_rect = coins.get_rect(topleft=(road_coins_positions[i], 577))
+            boom_rect = boom.get_rect(topleft=(road_coins_positions[i], 577))
+            if character_rect.colliderect(coins_rect):  # 캐릭터와 코인 충돌 감지
+                road_coins_positions[i] = road_coins_positions[-1] + positions[i]  + 130
+            if character_rect.colliderect(boom_rect):
+                boom_positions[i] = boom_positions[-1] + positions[i]  + 130
+            if i==7 or i==9 or i==13 or i==16 or i==21 or i==23 or i==27:
+                screen.blit(coins, (road_coins_positions[i], 447))  # 코인 위치에 그리기
+                screen.blit(boom, (boom_positions[i], 577))
+            else:
+                screen.blit(coins, (road_coins_positions[i], 577))  # 코인 위치에 그리기
 
         pygame.display.update()  # 화면 업데이트
         clock.tick(60)
@@ -244,7 +254,6 @@ while running:
         # 펫 선택 화면 출력
         choose_pet_screen()
         
-        # 클릭 이벤트 처리
         # 클릭 이벤트 처리
         if event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1:  # 왼쪽 마우스 버튼 클릭
