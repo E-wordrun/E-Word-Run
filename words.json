@@ -1,0 +1,128 @@
+{
+    "elementary": [
+        {
+            "korean": "고양이",
+            "english": "cat"
+        },
+        {
+            "korean": "사랑",
+            "english": "love"
+        },
+        {
+            "korean": "사과",
+            "english": "apple"
+        },
+        {
+            "korean": "개",
+            "english": "dog"
+        },
+        {
+            "korean": "물고기",
+            "english": "fish"
+        },
+        {
+            "korean": "행복",
+            "english": "happy"
+        },
+        {
+            "korean": "학교",
+            "english": "school"
+        },
+        {
+            "korean": "친구",
+            "english": "friend"
+        },
+        {
+            "korean": "책",
+            "english": "book"
+        },
+        {
+            "korean": "사람",
+            "english": "person"
+        }
+    ],
+    "middle": [
+        {
+            "korean": "여행",
+            "english": "trip"
+        },
+        {
+            "korean": "모험",
+            "english": "adventure"
+        },
+        {
+            "korean": "기회",
+            "english": "opportunity"
+        },
+        {
+            "korean": "자연",
+            "english": "nature"
+        },
+        {
+            "korean": "미래",
+            "english": "future"
+        },
+        {
+            "korean": "이해하다",
+            "english": "understand"
+        },
+        {
+            "korean": "사라지다",
+            "english": "disappear"
+        },
+        {
+            "korean": "결정하다",
+            "english": "decide"
+        },
+        {
+            "korean": "열정",
+            "english": "passion"
+        },
+        {
+            "korean": "우정",
+            "english": "friendship"
+        }
+    ],
+    "high": [
+        {
+            "korean": "잔인한",
+            "english": "cruel"
+        },
+        {
+            "korean": "의회",
+            "english": "council"
+        },
+        {
+            "korean": "거부, 퇴짜",
+            "english": "rejection"
+        },
+        {
+            "korean": "신참자",
+            "english": "newcomer"
+        },
+        {
+            "korean": "가치",
+            "english": "value"
+        },
+        {
+            "korean": "이루다, 성취하다",
+            "english": "achieve"
+        },
+        {
+            "korean": "평화",
+            "english": "peace"
+        },
+        {
+            "korean": "역할을 맡다",
+            "english": "land a role"
+        },
+        {
+            "korean": "종양",
+            "english": "tumor"
+        },
+        {
+            "korean": "해결하다",
+            "english": "solve"
+        }
+    ]
+}
