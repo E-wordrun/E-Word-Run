@@ -34,10 +34,10 @@ except pygame.error as e:
 
 font = pygame.font.Font('font/DungGeunMo.ttf', 52)
 input_text = ""  # 입력된 텍스트 초기화
-cursor_visible = True
-backspace_pressed = False
-backspace_start_time = 0
-backspace_interval = 40
+cursor_visible = True #커서 표시 상태
+backspace_pressed = False 
+backspace_start_time = 0 # 백스페이스 키가 눌린 시간
+backspace_interval = 40 # 백스페이스 키로 -> 글자 삭제 시간 (ms)
 
 cursor_y = 415
 
