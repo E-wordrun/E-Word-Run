@@ -8,6 +8,11 @@ pygame.init()
 size = [1280, 832]
 screen = pygame.display.set_mode(size)
 screen_width, screen_height = size  # 화면 크기 변수로 저장
+pygame.display.set_caption("E-Word-Run")
+# 아이콘 이미지 불러오기 (예: "icon.png" 이미지 파일)
+icon_image = pygame.image.load("image/coin.png")
+# 아이콘 설정
+pygame.display.set_icon(icon_image)
 
 # 초기 상태는 'main' 화면
 current_screen = 'main'
@@ -70,8 +75,11 @@ def choose_pet_screen():
 
 # 달리기 화면 with pet
 def play_pet():
-    global is_jumping, velocity_y  # 전역 변수 사용
+    global is_jumping, velocity_y, score 
+    score = 0
    
+    font = pygame.font.Font(None, 50)
+
     scoreBox = pygame.image.load('image/scorebox.png')
     scoreBox = pygame.transform.scale(scoreBox, (291, 103))
     
@@ -109,7 +117,7 @@ def play_pet():
     elif pet == 3:
         withPet = pygame.image.load('image/pet3.png')
     withPet = pygame.transform.flip(withPet, True, False)
-    withPet = pygame.transform.scale(withPet, (100, 100))
+    withPet = pygame.transform.scale(withPet, (80, 80))
 
     character_frame_index = 0
     character_frame_rate = 2  # 초당 10 프레임
@@ -198,25 +206,34 @@ def play_pet():
     
         # 캐릭터 및 펫 그리기
         screen.blit(current_character_frame, character_rect)
-        screen.blit(withPet, (100, pet_y_position))  # 펫을 위아래로 움직임
+        screen.blit(withPet, (85, pet_y_position))  # 펫을 위아래로 움직임
         frame_count += 1  # 프레임 카운트 증가  
         
+        boom_coll = True
+        coin_coll = True
         # 코인 위치 업데이트 및 충돌 감지
         for i in range(len(road_coins_positions)):
             if i==7 or i==9 or i==13 or i==16 or i==21 or i==23 or i==27:
                 coins_rect = coins.get_rect(topleft=(road_coins_positions[i], 447))
+                boom_rect = boom.get_rect(topleft=(boom_positions[i], 577))
             else:
                 coins_rect = coins.get_rect(topleft=(road_coins_positions[i], 577))
-            boom_rect = boom.get_rect(topleft=(road_coins_positions[i], 577))
             if character_rect.colliderect(coins_rect):  # 캐릭터와 코인 충돌 감지
                 road_coins_positions[i] = road_coins_positions[-1] + positions[i]  + 130
-            if character_rect.colliderect(boom_rect):
-                boom_positions[i] = boom_positions[-1] + positions[i]  + 130
+                if coin_coll:
+                    score += 1
             if i==7 or i==9 or i==13 or i==16 or i==21 or i==23 or i==27:
-                screen.blit(coins, (road_coins_positions[i], 447))  # 코인 위치에 그리기
+                if character_rect.colliderect(boom_rect):
+                    boom_positions[i] = boom_positions[-1] + positions[i]  + 130
+                    score -= 10
+            if i==7 or i==9 or i==13 or i==16 or i==21 or i==23 or i==27:
                 screen.blit(boom, (boom_positions[i], 577))
+                screen.blit(coins, (road_coins_positions[i], 447))  # 코인 위치에 그리기
             else:
                 screen.blit(coins, (road_coins_positions[i], 577))  # 코인 위치에 그리기
+        score_text = font.render(f"{score}", True, (0, 0, 0))
+        screen.blit(score_text, (screen_width - 260, 54))
+
 
         pygame.display.update()  # 화면 업데이트
         clock.tick(60)
