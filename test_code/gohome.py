@@ -34,7 +34,7 @@ def load_images():
         background = pygame.image.load('image/start_background.png')
         background = pygame.transform.scale(background, (1280, 832))
         play = pygame.image.load('image/play-btn.png')
-        play = pygame.transform.scale(play, (251, 140))
+        play = pygame.transform.scale(play, (300, 100))
     except pygame.error as e:
         print(f"이미지를 불러올 수 없습니다: {e}")
         pygame.quit()
@@ -173,7 +173,7 @@ def finish_message(message):
 def show_result_screen(score_result):
     result_x = (1280 - 718) // 2 + 60
     result_y = (832 - 667) // 2 + 50
-    home_button = pygame.image.load('image/homebutton.png')
+    home_button = pygame.image.load('image/home.png')
     home_button = pygame.transform.scale(home_button, (45, 45))
     running = True
     while running:
