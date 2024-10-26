@@ -150,7 +150,9 @@ def show_message(message):
     pygame.display.update()
     
     pygame.time.wait(1500) #1.5초 대기
+    
     play_pet()
+    
 # 결과 화면으로 전환하는 함수
 def show_result_screen(score_result):
     result_x = (1280 - 718) // 2 + 60
@@ -184,6 +186,7 @@ def show_result_screen(score_result):
         screen.blit(score_text_result, (screen_width // 2 - score_width // 2 + 7, screen_height // 2 + 16))
 
         pygame.display.update()
+        
 # 게임 루프
 current_word_index = 0  # 현재 단어 인덱스  
 def quiz():
@@ -210,15 +213,20 @@ def quiz():
                 elif event.key == pygame.K_RETURN:
                     # 엔터를 눌렀을 때 결과 확인
                     correct_english = word_data[globals()['level']][current_word_index]['english']
-                    if input_text.lower() == correct_english.lower():  # 대소문자 구분 없이 비교
-                        current_word_index += 1  # 다음 단어로 넘어감 - 임시
-                        input_text = ""  # 맞으면 입력 필드를 초기화 - 임시
+                    if input_text.lower() != correct_english.lower():  # 대소문자 구분 없이 비교
+                        globals()['score'] -= 10 #10점 감소
+                        show_message("틀렸습니다!")
                         play_pet()
                              
                     else:
-                        # 틀린 경우 메세지창 표시 후 -> 결과 화면으로 전환
-                        show_message("틀렸습니다!")
-                        globals() ['score'] -= 10
+                        
+                        globals() ['score'] += 10 #10점 증가
+                        current_word_index += 1  # 다음 단어로 넘어감 - 임시
+                        input_text = ""  # 맞으면 입력 필드를 초기화 - 임시
+                        play_pet()  # 게임 계속 진행
+                        
+                         
+                         
                 else:
                     input_text += event.unicode
             if event.type == pygame.KEYUP:
