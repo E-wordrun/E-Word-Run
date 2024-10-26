@@ -33,8 +33,8 @@ def load_images():
     try:
         background = pygame.image.load('image/start_background.png')
         background = pygame.transform.scale(background, (1280, 832))
-        play = pygame.image.load('image/play-button.png')
-        play = pygame.transform.scale(play, (285, 183))
+        play = pygame.image.load('image/play-btn.png')
+        play = pygame.transform.scale(play, (251, 140))
     except pygame.error as e:
         print(f"이미지를 불러올 수 없습니다: {e}")
         pygame.quit()
@@ -339,7 +339,7 @@ def play_pet():
     background = pygame.transform.scale(background, (screen_width, screen_height))  
     background_width = background.get_rect().width
     background_x_pos = 0
-    background_speed = 12
+    background_speed = 9.7
     
     # 캐릭터 초기 위치 저장
     character_start_y = character_rect.y
