@@ -4,6 +4,7 @@ import sys
 import math
 import json 
 import time
+import random
 
 def load_json():
     with open('words.json', 'r', encoding='utf-8') as file:
@@ -153,6 +154,21 @@ def show_message(message):
     
     play_pet()
     
+# 문제를 다 풀었을 때 메세지창 함수
+def finish_message(message):
+    font = pygame.font.Font('font/DungGeunMo.ttf', 52) 
+    message_surface = font.render(message, True, (0, 0, 0))
+    message_rect = message_surface.get_rect(center=(640, 416 - 20))  # 화면 중앙
+    screen.blit(blur_background, (0, 0))  # 배경 다시 그리기
+    pygame.draw.rect(screen, (255, 255, 255), (380, 350, 520, 100))  # 메시지 창 배경
+    pygame.draw.rect(screen, (0, 0, 0), (380, 350, 520, 100), 2)  # 테두리
+    screen.blit(message_surface, message_rect)
+    pygame.display.update()
+    
+    pygame.time.wait(1500) #1.5초 대기
+    
+    show_result_screen(globals() ['score'])
+    
 # 결과 화면으로 전환하는 함수
 def show_result_screen(score_result):
     result_x = (1280 - 718) // 2 + 60
@@ -222,10 +238,10 @@ def quiz():
                         
                         globals() ['score'] += 8 #10점 증가
                         current_word_index += 1  # 다음 단어로 넘어감 - 임시
+                        if current_word_index >= len(word_data[globals()['level']]):
+                            finish_message(globals()['level'] + " master")
                         input_text = ""  # 맞으면 입력 필드를 초기화 - 임시
                         play_pet()  # 게임 계속 진행
-                        
-                         
                          
                 else:
                     input_text += event.unicode
@@ -341,6 +357,16 @@ def play_pet():
     positions = [i * 130 for i in range(28)]  # 초기 x 위치 설정
     boom_positions = [i * 130 for i in range(28)]
     
+    # 폭탄 위치 램덤 생성
+    min_value = 4
+    max_value = 26
+    numbers = []
+    while len(numbers) < 6:
+        num = random.randint(min_value, max_value)
+        # 새로운 숫자가 이미 리스트에 없고, +2 또는 -2의 차이가 없는 경우에만 추가
+        if num not in numbers and not any(abs(num - x) <= 2 for x in numbers):
+            numbers.append(num)
+    
     cnt = 0
     # 게임 루프
     while True:  # True로 변경하여 무한 루프를 유지
@@ -403,9 +429,10 @@ def play_pet():
         coin_coll = True
         booom = pygame.image.load('image/booom.png')
         booom = pygame.transform.scale(booom, (50, 50))
+        
         # 코인 위치 업데이트 및 충돌 감지
         for i in range(len(road_coins_positions)):
-            if i in [6, 9, 13, 18, 21, 23, 27]:
+            if i in numbers:
                 coins_rect = coins.get_rect(topleft=(road_coins_positions[i], 447))
                 boom_rect = boom.get_rect(topleft=(boom_positions[i], 577))
             else:
@@ -414,7 +441,7 @@ def play_pet():
                 road_coins_positions[i] = road_coins_positions[-1] + positions[i]  + 130
                 if coin_coll:
                     globals() ['score'] += 1
-            if i in [6, 9, 13, 18, 21, 23, 27]:
+            if i in numbers:
                 if character_rect.colliderect(boom_rect):
                     pygame.display.update()
                     screen.blit(booom, boom_rect)
@@ -424,7 +451,7 @@ def play_pet():
                     pygame.time.wait(500) #1.5초 대기
                     show_result_screen(globals() ['score'])
                     running = False
-            if i in [6, 9, 13, 18, 21, 23, 27]:
+            if i in numbers:
                 screen.blit(boom, (boom_positions[i], 577))
                 screen.blit(coins, (road_coins_positions[i], 447))  # 코인 위치에 그리기
             else:
