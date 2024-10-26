@@ -1,8 +1,20 @@
+from tkinter import font
 import pygame
 import sys
 import math
+import json 
+import time
+
+def load_json():
+    with open('words.json', 'r', encoding='utf-8') as file:
+        return json.load(file)
 
 pygame.init()
+
+# 게임 상태 변수
+current_screen = 'main'
+globals() ['font'] = pygame.font.Font(None, 50)
+globals() ['level'] = ''
 
 # 화면 크기 설정
 size = [1280, 832]
@@ -13,9 +25,6 @@ pygame.display.set_caption("E-Word-Run")
 icon_image = pygame.image.load("image/coin.png")
 # 아이콘 설정
 pygame.display.set_icon(icon_image)
-
-# 초기 상태는 'main' 화면
-current_screen = 'main'
 
 # 이미지 로드
 def load_images():
@@ -73,12 +82,138 @@ def choose_pet_screen():
     
     pygame.display.update()
 
+
+
+# 배경과 기타 이미지 로드
+try:
+    blur_background = pygame.image.load('image/blur-background.png')
+    blur_background = pygame.transform.scale(blur_background, (1280, 832))
+
+    input_bar = pygame.image.load('image/inputbox.png')
+    input_bar = pygame.transform.scale(input_bar, (383, 296))
+
+    result_background = pygame.image.load('image/result.png')
+    result_background = pygame.transform.scale(result_background, (608, 551))
+    
+    home_button = pygame.image.load('image/homebutton.png')
+    home_button = pygame.transform.scale(home_button, (45, 45))
+
+except pygame.error as e:
+    print(f"이미지를 불러올 수 없습니다: {e}")
+    pygame.quit()
+    sys.exit()
+
+# 틀렸습니다 메세지창 함수
+def show_message(message):
+    message_surface = font.render(message, True, (0, 0, 0))
+    message_rect = message_surface.get_rect(center=(640, 416 - 20))  # 화면 중앙
+    screen.blit(blur_background, (0, 0))  # 배경 다시 그리기
+    pygame.draw.rect(screen, (255, 255, 255), (380, 350, 520, 100))  # 메시지 창 배경
+    pygame.draw.rect(screen, (0, 0, 0), (380, 350, 520, 100), 2)  # 테두리
+    screen.blit(message_surface, message_rect)
+    pygame.display.update()
+    
+    pygame.time.wait(1500) #1.5초 대기
+    play_pet()
+# 결과 화면으로 전환하는 함수
+def show_result_screen(score):
+    result_x = (1280 - 718) // 2 + 60
+    result_y = (832 - 667) // 2 + 50
+    running = True
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+
+        # 배경 및 결과 화면 출력
+        screen.blit(blur_background, (0, 0))
+        screen.blit(result_background, (result_x, result_y))
+        screen.blit(home_button, (22, 20))
+        score_text_result = font.render(f"{score}", True, (0, 0, 0))
+        text_rect = score_text_result.get_rect()
+        score_width = text_rect.width
+        screen.blit(score_text_result, (screen_width // 2 - score_width // 2 + 7, screen_height // 2 + 16))
+
+        pygame.display.update()
+# 게임 루프
+current_word_index = 0  # 현재 단어 인덱스  
+def quiz():
+    global current_word_index
+    font = pygame.font.Font('font/DungGeunMo.ttf', 52)
+    input_text = ""  # 입력된 텍스트 초기화
+    cursor_visible = True #커서 표시 상태
+    backspace_pressed = False 
+    backspace_start_time = 0 # 백스페이스 키가 눌린 시간
+    backspace_interval = 40 # 백스페이스 키로 -> 글자 삭제 시간 (ms)
+    cursor_y = 415
+
+    # JSON에서 단어 데이터를 가져옴
+    word_data = load_json()  
+    running = True
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_BACKSPACE:
+                    backspace_pressed = True
+                    backspace_start_time = pygame.time.get_ticks()
+                elif event.key == pygame.K_RETURN:
+                    # 엔터를 눌렀을 때 결과 확인
+                    correct_english = word_data[globals()['level']][current_word_index]['english']
+                    if input_text.lower() == correct_english.lower():  # 대소문자 구분 없이 비교
+                        current_word_index += 1  # 다음 단어로 넘어감 - 임시
+                        input_text = ""  # 맞으면 입력 필드를 초기화 - 임시
+                        play_pet()
+                        if current_word_index >= len(word_data[globals()['level']]):
+                            # 모든 단어를 맞추면 게임 종료- 임시!.
+                            show_result_screen()
+                            running = False
+                    else:
+                        # 틀린 경우 메세지창 표시 후 -> 결과 화면으로 전환
+                        show_message("틀렸습니다!")
+                        score -= 10
+                else:
+                    input_text += event.unicode
+            if event.type == pygame.KEYUP:
+                if event.key == pygame.K_BACKSPACE:
+                    backspace_pressed = False
+
+        if backspace_pressed:
+            current_time = pygame.time.get_ticks()
+            if current_time - backspace_start_time > backspace_interval:
+                if input_text:
+                    input_text = input_text[:-1]
+                backspace_start_time = current_time
+
+        screen.blit(blur_background, (0, 0))
+        screen.blit(input_bar, (450, 300))
+
+        # 현재 단어 표시 (한국어)
+        korean_word = word_data[globals()['level']][current_word_index]['korean']
+        korean_surface = font.render(korean_word, True, (0, 0, 0))
+        screen.blit(korean_surface, (580, 250))  # 한국어 단어의 위치
+
+        # 입력된 텍스트 표시
+        text_surface = font.render(input_text, True, (0, 0, 0))
+        screen.blit(text_surface, (500, 378))
+
+        # 커서 표시
+        cursor_x = 500 + text_surface.get_width()
+        cursor_height = 30
+        pygame.draw.rect(screen, (0, 0, 0), (cursor_x, cursor_y - cursor_height // 2 - 5, 2, cursor_height))
+
+        pygame.display.update()    
+
+    
+    
+    
+    
+
 # 달리기 화면 with pet
 def play_pet():
-    global is_jumping, velocity_y, score 
-    score = 0
-   
-    font = pygame.font.Font(None, 50)
+    global is_jumping, velocity_y, score
 
     scoreBox = pygame.image.load('image/scorebox.png')
     scoreBox = pygame.transform.scale(scoreBox, (291, 103))
@@ -153,8 +288,10 @@ def play_pet():
     positions = [i * 130 for i in range(28)]  # 초기 x 위치 설정
     boom_positions = [i * 130 for i in range(28)]
     
+    cnt = 0
     # 게임 루프
     while True:  # True로 변경하여 무한 루프를 유지
+        cnt += 1
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -211,9 +348,11 @@ def play_pet():
         
         boom_coll = True
         coin_coll = True
+        booom = pygame.image.load('image/booom.png')
+        booom = pygame.transform.scale(booom, (50, 50))
         # 코인 위치 업데이트 및 충돌 감지
         for i in range(len(road_coins_positions)):
-            if i==7 or i==9 or i==13 or i==16 or i==21 or i==23 or i==27:
+            if i in [6, 9, 13, 18, 21, 23, 27]:
                 coins_rect = coins.get_rect(topleft=(road_coins_positions[i], 447))
                 boom_rect = boom.get_rect(topleft=(boom_positions[i], 577))
             else:
@@ -222,18 +361,25 @@ def play_pet():
                 road_coins_positions[i] = road_coins_positions[-1] + positions[i]  + 130
                 if coin_coll:
                     score += 1
-            if i==7 or i==9 or i==13 or i==16 or i==21 or i==23 or i==27:
+            if i in [6, 9, 13, 18, 21, 23, 27]:
                 if character_rect.colliderect(boom_rect):
-                    boom_positions[i] = boom_positions[-1] + positions[i]  + 130
-                    score -= 10
-            if i==7 or i==9 or i==13 or i==16 or i==21 or i==23 or i==27:
+                    pygame.display.update()
+                    screen.blit(booom, boom_rect)
+                    pygame.display.update()
+                    pygame.time.wait(500) #1.5초 대기
+                    show_result_screen(score)
+                    running = False
+            if i in [6, 9, 13, 18, 21, 23, 27]:
                 screen.blit(boom, (boom_positions[i], 577))
                 screen.blit(coins, (road_coins_positions[i], 447))  # 코인 위치에 그리기
             else:
                 screen.blit(coins, (road_coins_positions[i], 577))  # 코인 위치에 그리기
         score_text = font.render(f"{score}", True, (0, 0, 0))
         screen.blit(score_text, (screen_width - 260, 54))
-
+        
+        # print(cnt)
+        if cnt % 100 == 0:
+            quiz()
 
         pygame.display.update()  # 화면 업데이트
         clock.tick(60)
@@ -284,20 +430,25 @@ while running:
                 # 각 Rect 객체와 마우스 위치의 충돌 여부 확인
                 if element_pet_rect.collidepoint(mouse_pos):
                     pet = 1  # elementPet 클릭 시 pet 변수에 1을 할당
+                    globals() ['level'] = 'elementary'
                     print(f"Selected pet: {pet}")
 
                 if middle_pet_rect.collidepoint(mouse_pos):
                     pet = 2  # middlePet 클릭 시 pet 변수에 2를 할당
+                    globals() ['level'] = 'middle'
                     print(f"Selected pet: {pet}")
 
                 if high_pet_rect.collidepoint(mouse_pos):
                     pet = 3  # highPet 클릭 시 pet 변수에 3을 할당
+                    globals() ['level'] = 'high'
                     print(f"Selected pet: {pet}")
         if pet > 0:
             current_screen = 'play_pet' 
 
     elif current_screen == 'play_pet':
+        score = 0
         play_pet()  # play_pet 함수 호출
+
     
     pygame.display.update()  # 화면 업데이트 추가
     
