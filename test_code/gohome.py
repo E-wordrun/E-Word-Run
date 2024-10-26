@@ -114,7 +114,7 @@ def choose_pet_screen():
                         globals() ['level'] = 'high'
                         print(f"Selected pet: {pet}")
             if pet > 0:
-                globals() ['score'] = 0
+                globals() ['score'] = -2
                 running = False
                 play_pet()  # play_pet 함수 호출
 
@@ -214,13 +214,13 @@ def quiz():
                     # 엔터를 눌렀을 때 결과 확인
                     correct_english = word_data[globals()['level']][current_word_index]['english']
                     if input_text.lower() != correct_english.lower():  # 대소문자 구분 없이 비교
-                        globals()['score'] -= 10 #10점 감소
+                        globals()['score'] -= 12 #10점 감소
                         show_message("틀렸습니다!")
                         play_pet()
                              
                     else:
                         
-                        globals() ['score'] += 10 #10점 증가
+                        globals() ['score'] += 8 #10점 증가
                         current_word_index += 1  # 다음 단어로 넘어감 - 임시
                         input_text = ""  # 맞으면 입력 필드를 초기화 - 임시
                         play_pet()  # 게임 계속 진행
