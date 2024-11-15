@@ -229,7 +229,7 @@ def quiz():
                 elif event.key == pygame.K_RETURN:
                     # 엔터를 눌렀을 때 결과 확인
                     correct_english = word_data[globals()['level']][current_word_index]['english']
-                    if input_text.lower() != correct_english.lower():  # 대소문자 구분 없이 비교
+                    if input_text.lower().replace(" ", "") != correct_english.lower():  # 대소문자 구분 없이 비교
                         globals()['score'] -= 12 #10점 감소
                         show_message("틀렸습니다!")
                         play_pet()
@@ -343,11 +343,6 @@ def play_pet():
     
     # 캐릭터 초기 위치 저장
     character_start_y = character_rect.y
-    
-    # 펫의 초기 위치 및 위아래로 움직이는 애니메이션 설정
-    pet_base_y = screen_height - 380  # 펫의 기본 y 위치
-    pet_amplitude = 15  # 위아래로 움직이는 범위 (10픽셀)
-    pet_frequency = 0.2  # 움직이는 속도 (값이 작을수록 느려짐)
 
     # 게임 루프
     frame_count = 0  # 프레임 카운트 추가
@@ -417,12 +412,12 @@ def play_pet():
                 velocity_y = 0
     
         # 펫의 위아래 움직임 계산 (사인파 사용)
-        pet_y_offset = pet_amplitude * math.sin(pet_frequency * frame_count)
-        pet_y_position = pet_base_y + pet_y_offset
+        # pet_y_offset = pet_amplitude * math.sin(pet_frequency * frame_count)
+        # pet_y_position = pet_base_y + pet_y_offset
     
         # 캐릭터 및 펫 그리기
         screen.blit(current_character_frame, character_rect)
-        screen.blit(withPet, (85, pet_y_position))  # 펫을 위아래로 움직임
+        screen.blit(withPet, (85, screen_height-380))  # 펫을 위아래로 움직임
         frame_count += 1  # 프레임 카운트 증가  
         
         boom_coll = True
