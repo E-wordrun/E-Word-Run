@@ -229,7 +229,6 @@ def quiz():
                 elif event.key == pygame.K_RETURN:
                     # 엔터를 눌렀을 때 결과 확인
                     correct_english = word_data[globals()['level']][current_word_index]['english']
-                    input_text = input_text.replace(" ", "")
                     if input_text.lower() != correct_english.lower():  # 대소문자 구분 없이 비교
                         globals()['score'] -= 12 #10점 감소
                         show_message("틀렸습니다!")
@@ -331,16 +330,16 @@ def play_pet():
 
     # 점프 관련 변수 설정
     is_jumping = False
-    jump_speed = 15  # 점프 속도
-    gravity = 0.8      # 중력
-    velocity_y = 0.8   # y축 속도
+    jump_speed = 40  # 점프 속도
+    gravity = 4      # 중력
+    velocity_y = 4   # y축 속도
 
     # 배경 설정
     background = pygame.image.load('image/background.png')
     background = pygame.transform.scale(background, (screen_width, screen_height))  
     background_width = background.get_rect().width
     background_x_pos = 0
-    background_speed = 7
+    background_speed = 9.7
     
     # 캐릭터 초기 위치 저장
     character_start_y = character_rect.y
